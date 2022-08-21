@@ -1,6 +1,6 @@
-//TODO:delete ve add butonlarina fonksiyon ekle
 import { useReducer, createContext, useEffect } from 'react';
 import axios from 'axios';
+
 const api_base_url = 'http://localhost:4555';
 
 export const AppContext = createContext();
@@ -14,11 +14,12 @@ const initialState = {
 
 		formValues: { singular: null, plural: null, article: null },
 	},
+	messageToUser: '',
 };
 
 function reducer(state, action) {
 	let _state = { ...state };
-	let item, property, id, value, selectedItem;
+	let item, id, selectedItem;
 	switch (action.type) {
 		case 'increaseCount':
 			_state.count++;
@@ -30,12 +31,6 @@ function reducer(state, action) {
 			_state.germanNouns = action.payload;
 			break;
 
-		case 'changeItemProperty':
-			property = action.payload.property;
-			id = action.payload.id;
-			value = action.payload.value;
-
-			break;
 		case 'updateModeAsEditing':
 			item = action.payload.item;
 
@@ -61,10 +56,7 @@ function reducer(state, action) {
 			selectedItem.article = _state.editingCard.formValues.article;
 			selectedItem.plural = _state.editingCard.formValues.plural;
 			selectedItem.isEditing = false;
-			// _state.originalValuesBeforeEditing.id = undefined;
-			// _state.originalValuesBeforeEditing.singular = undefined;
-			// _state.originalValuesBeforeEditing.article = undefined;
-			// _state.originalValuesBeforeEditing.plural = undefined;
+
 			break;
 		case 'changeFormValuesWithoutSaving':
 			const valueType = action.payload.valueType;
@@ -101,13 +93,6 @@ function reducer(state, action) {
 			item.manageMessage = 'Manage options:';
 			break;
 
-		case 'saveItemDeleting':
-			id = action.payload.id;
-
-			saveItem = { article, singular, plural } = item; //TODO: what das it mean 2 equals?
-			item.isEditing = 'reading';
-			item.manageMessage = 'Manage options:';
-			break;
 		case 'deleteItem':
 			id = action.payload.id;
 			item = state.germanNouns.find((m) => {
@@ -118,10 +103,12 @@ function reducer(state, action) {
 				_state.germanNouns.splice(itemIndex, 1);
 			}
 			break;
-		case 'saveNewItem':
-			const newSingular = action.payload.singular;
-			const newPlural = action.payload.plural;
-			const newArticle = action.payload.article;
+		case 'saveItem':
+			console.log(107, 'context dispatch edildi', action.payload);
+
+			const newSingular = action.payload.item.singular;
+			const newPlural = action.payload.item.plural;
+			const newArticle = action.payload.item.article;
 			const newId =
 				_state.germanNouns[_state.germanNouns.length - 1].id + 1;
 			_state.germanNouns.push({
@@ -132,6 +119,12 @@ function reducer(state, action) {
 				isEditing: false,
 				isReadyToDelete: false,
 			});
+			break;
+		case 'handleFailedSave':
+			item = action.payload.item;
+			_state.message = action.payload.message;
+
+			item.isProcessing = false;
 			break;
 	}
 	return _state;
@@ -155,11 +148,61 @@ export const AppProvider = ({ children }) => {
 			dispatch({ type: 'loadGermanNouns', payload: _germanNouns });
 		})();
 	}, []);
+
+	const apiDispatch = async (action) => {
+		const item = action.payload?.item;
+		const newId = state.germanNouns[state.germanNouns.length - 1].id + 1;
+		let itemForApi = {};
+		if (item) {
+			itemForApi = {
+				id: newId,
+				article: item.article,
+				singular: item.singular,
+				plural: item.plural,
+			};
+		}
+		switch (action.type) {
+			case 'saveItem': {
+				// dispatch({
+				// 	type: 'turnOnProcessingStatus',
+				// 	payload: { item },
+				//  }) ;
+				try {
+					const responseOfApi = await axios.post(
+						`${api_base_url}/germanNouns/`,
+						itemForApi
+					);
+					if ([200, 201].includes(responseOfApi.status)) {
+						dispatch(action);
+						console.log(175, 'action dispatch edildi');
+					} else {
+						dispatch({
+							type: 'handleFailedSave',
+							payload: {
+								item,
+								message: `API Error: ${response.status}`,
+							},
+						});
+					}
+				} catch (err) {
+					dispatch({
+						type: 'handleFailedSave',
+						payload: {
+							item,
+							message: `Error: ${err.message}`,
+						},
+					});
+				}
+				break;
+			}
+		}
+	};
 	return (
 		<AppContext.Provider
 			value={{
 				state,
 				dispatch,
+				apiDispatch,
 			}}
 		>
 			{children}

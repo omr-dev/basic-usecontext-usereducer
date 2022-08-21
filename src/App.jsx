@@ -16,6 +16,12 @@ function App() {
 				<button onClick={() => dispatch('increaseCount')}>+</button>
 				<p>{state.count}</p>
 			</div>
+			{state.messageToUser !== '' && (
+				<div className="messageToUser">
+					<p>{state.messageToUser}</p>
+				</div>
+			)}
+
 			<NewNounBox />
 			<div className="germanNounArea">
 				{state.germanNouns.map((item, i) => {

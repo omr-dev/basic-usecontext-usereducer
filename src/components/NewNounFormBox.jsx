@@ -5,18 +5,20 @@ export const NewNounFormBox = ({ setIsReadyForNewItem }) => {
 	const [formValueSingular, setFormValueSingular] = useState('');
 	const [formValuePlural, setFormValuePlural] = useState('');
 	const [formValueArticle, setFormValueArticle] = useState('');
-	const { state, dispatch } = useContext(AppContext);
+	const { state, apiDispatch } = useContext(AppContext);
 
 	return (
 		<form
 			onSubmit={(e) => {
 				e.preventDefault();
-				dispatch({
-					type: 'saveNewItem',
+				apiDispatch({
+					type: 'saveItem',
 					payload: {
-						article: formValueArticle,
-						plural: formValuePlural,
-						singular: formValueSingular,
+						item: {
+							article: formValueArticle,
+							plural: formValuePlural,
+							singular: formValueSingular,
+						},
 					},
 				});
 				setIsReadyForNewItem(false);
@@ -31,7 +33,7 @@ export const NewNounFormBox = ({ setIsReadyForNewItem }) => {
 						onChange={(e) => {
 							setFormValueArticle(e.target.value);
 						}}
-						requiered="true"
+						required
 					/>
 				</div>
 				<div className="row">
@@ -41,7 +43,7 @@ export const NewNounFormBox = ({ setIsReadyForNewItem }) => {
 						onChange={(e) => {
 							setFormValueSingular(e.target.value);
 						}}
-						requiered="true"
+						required
 					/>
 				</div>
 				<div className="row">
@@ -51,7 +53,7 @@ export const NewNounFormBox = ({ setIsReadyForNewItem }) => {
 						onChange={(e) => {
 							setFormValuePlural(e.target.value);
 						}}
-						requiered="true"
+						required
 					/>
 				</div>
 				<div className="buttonRow" style={{ justifyContent: 'end' }}>

@@ -17,6 +17,54 @@
       "article": "der",
       "singular": "Workshop",
       "plural": "die Workshops"
+    },
+    {
+      "id": 4,
+      "article": "aa",
+      "singular": "ff",
+      "plural": "ww"
+    },
+    {
+      "id": 5,
+      "article": "xx",
+      "singular": "dd",
+      "plural": "ss"
+    },
+    {
+      "id": 6,
+      "article": "www",
+      "singular": "dd",
+      "plural": "qqq"
+    },
+    {
+      "id": 7,
+      "article": "hop",
+      "singular": "lop",
+      "plural": "okl"
+    },
+    {
+      "id": 8,
+      "article": "asd",
+      "singular": "assssss",
+      "plural": "qwr2"
+    },
+    {
+      "id": 9,
+      "article": "sadsa",
+      "singular": "qwwq",
+      "plural": "wdas"
+    },
+    {
+      "id": 10,
+      "article": "asdas",
+      "singular": "wqwqwq",
+      "plural": "vvv"
+    },
+    {
+      "id": 11,
+      "article": "oldu",
+      "singular": "bu",
+      "plural": "sefer"
     }
   ]
 }
