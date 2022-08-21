@@ -103,7 +103,7 @@ function reducer(state, action) {
 				_state.germanNouns.splice(itemIndex, 1);
 			}
 			break;
-		case 'saveItem':
+		case 'saveItemChanges':
 			console.log(107, 'context dispatch edildi', action.payload);
 
 			const newSingular = action.payload.item.singular;
@@ -170,6 +170,46 @@ export const AppProvider = ({ children }) => {
 				try {
 					const responseOfApi = await axios.post(
 						`${api_base_url}/germanNouns/`,
+						itemForApi
+					);
+					if ([200, 201].includes(responseOfApi.status)) {
+						dispatch(action);
+						console.log(175, 'action dispatch edildi');
+					} else {
+						dispatch({
+							type: 'handleFailedSave',
+							payload: {
+								item,
+								message: `API Error: ${response.status}`,
+							},
+						});
+					}
+				} catch (err) {
+					dispatch({
+						type: 'handleFailedSave',
+						payload: {
+							item,
+							message: `Error: ${err.message}`,
+						},
+					});
+				}
+				break;
+			}
+			case 'saveItemChanges': {
+				itemForApi = {
+					id: state.editingCard.id,
+					article: state.editingCard.formValues.article,
+					singular: state.editingCard.formValues.singular,
+					plural: state.editingCard.formValues.plural,
+				};
+				// dispatch({
+				// 	type: 'turnOnProcessingStatus',
+				// 	payload: { item },
+				//  }) ;
+				try {
+					console.log(204, 'id', itemForApi);
+					const responseOfApi = await axios.put(
+						`${api_base_url}/germanNouns/${itemForApi.id}`,
 						itemForApi
 					);
 					if ([200, 201].includes(responseOfApi.status)) {

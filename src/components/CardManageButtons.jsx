@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import { AppContext } from '../AppContext';
 
 export const CardManageButtons = ({ item, isEditingCard, isReadyToDelete }) => {
-	const { state, dispatch } = useContext(AppContext);
-	
+	const { state, dispatch, apiDispatch } = useContext(AppContext);
+
 	return (
 		<div className="buttonRow">
 			<div className="manageMessage">{item.manageMessage}</div>
@@ -13,7 +13,7 @@ export const CardManageButtons = ({ item, isEditingCard, isReadyToDelete }) => {
 					<>
 						<button
 							onClick={() => {
-								dispatch({
+								apiDispatch({
 									type: 'saveItemChanges',
 									payload: { id: item.id },
 								});
