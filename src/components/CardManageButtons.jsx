@@ -42,7 +42,7 @@ export const CardManageButtons = ({ item, isEditingCard, isReadyToDelete }) => {
 							<>
 								<button
 									onClick={() => {
-										dispatch({
+										apiDispatch({
 											type: 'deleteItem',
 											payload: { id: item.id },
 										});
